@@ -14,29 +14,27 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      
-      const data = await res.json();
 
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.role);
+      const data = await response.json();
 
-        if (data.role === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/");
-        }
+      if (response.ok) {
+        // Save token and role
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('role', data.role);
+
+        // Redirect based on role
+        navigate(data.role === 'admin' ? '/admin' : '/');
       } else {
-        setError(data.message || "Login failed");
+        setError(data.message || 'Login failed');
       }
     } catch (err) {
-      console.error("Login error:", err);
-      setError("Something went wrong. Please try again.");
+      console.error('Login error:', err);
+      setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -45,6 +43,7 @@ const Login = () => {
   return (
     <div className="p-6 max-w-md mx-auto">
       <h2 className="text-2xl font-bold mb-4">Login</h2>
+      
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
       <form onSubmit={handleLogin}>
@@ -69,9 +68,9 @@ const Login = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full px-4 py-2 rounded text-white ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+          className={`w-full px-4 py-2 rounded text-white transition duration-200 ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? 'Logging in...' : 'Login'}
         </button>
       </form>
     </div>
